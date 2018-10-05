@@ -20,7 +20,6 @@ def assignPoints(tbl, ctrs):
         cluster = 0
         for i in range(len(ctrs)):
 	    dist = euclideanDist(point, ctrs[i])
-            #dist = sqrt((point[1]-ctrs[i][1])**2 + (point[0]-ctrs[i][0])**2)
             if dist < mindist:
                 mindist = dist
                 cluster = i
@@ -35,6 +34,16 @@ def recalculateCtrs(tbl, ctrs, ptsAsgn):
     """Update the centroids based on the points assigned to them"""
 
     newCtrs = [0] * len(ctrs)
+   
+    #Tbl = pandas.DataFrame(tbl, columns=['X', 'Y'])
+    #Tbl['ptAsgn'] = ptsAsgn
+    #print Tbl
+    #means = Tbl.groupby(['ptsAsgn']).mean()
+    #print means
+
+    #for i in range(len(ctrs)):
+#	newCtrs[i] = means.iloc[i]
+	
 
     """SOME CODE GOES HERE"""
     pt0x = 0
@@ -52,30 +61,19 @@ def recalculateCtrs(tbl, ctrs, ptsAsgn):
             pt0x += tbl[i][0]
             pt0y += tbl[i][1]
             pt0ctr += 1
-        if ptsAsgn[i] == 1:
+        elif ptsAsgn[i] == 1:
             pt1x += tbl[i][0]
             pt1y += tbl[i][1]
             pt1ctr += 1
-        else:
+       	else:
             pt2x += tbl[i][0]
             pt2y += tbl[i][1]
             pt2ctr += 1
 
-    if pt0ctr != 0:
-	newCtrs[0] = [pt0x/pt0ctr, pt0y/pt0ctr]
-    else:
-	print "hi"
-	newCtrs[0] = ctrs[0]
-    if pt1ctr != 0:
-	newCtrs[1] = [pt1x/pt1ctr, pt1y/pt1ctr]
-    else:
-	print "hi"
-	newCtrs[1] = ctrs[1]
-    if pt2ctr != 0:
-	newCtrs[2] = [pt2x/pt2ctr, pt2y/pt2ctr]
-    else:
-	print "hi"
-	newCtrs[2] = ctrs[2]
+
+    newCtrs[0] = [pt0x/pt0ctr, pt0y/pt0ctr]
+    newCtrs[1] = [pt1x/pt1ctr, pt1y/pt1ctr]
+    newCtrs[2] = [pt2x/pt2ctr, pt2y/pt2ctr]
 
     return newCtrs
 
@@ -150,11 +148,11 @@ def main():
     f.close()
 
     """initializes centroids, stop criterion and step counting for clustering"""
-    #newCtrs = [[5,0], [5,40], [5,80]]
-    r = []
-    for x in range(6):
-	r.append(random.randint(1,101))
-    newCtrs = [[r[0],r[1]], [r[2],r[3]], [r[4],r[5]]]
+    newCtrs = [[5,0], [5,40], [5,80]]
+#    r = []
+#    for x in range(6):
+#	r.append(random.randint(1,101))
+#    newCtrs = [[r[0],r[1]], [r[2],r[3]], [r[4],r[5]]]
 
     ptMemb = assignPoints(dataTable, newCtrs)
     stopCrit = False
