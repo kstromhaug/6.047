@@ -57,9 +57,9 @@ for i in range(10000):
 		val = random.random()
 # For N distribution
 		if val < 0.1:
-			# Nseq.append(0)
-			# Nscore = Nscore * N[0]
-			# Cscore = Cscore * C[0]
+			Nseq.append(0)
+			Nscore = Nscore * N[0]
+			Cscore = Cscore * C[0]
 			pass
 		elif val < 0.45:
 			Nseq.append(1)
@@ -87,20 +87,20 @@ for i in range(10000):
 	for j in range(10):
 		val = random.random()
 # For N distribution
-		if val < 0.1:
-			# Cseq.append(0)
-			# Nscore = Nscore * N[0]
-			# Cscore = Cscore * C[0]
+		if val < 0.05:
+			Cseq.append(0)
+			Nscore = Nscore * N[0]
+			Cscore = Cscore * C[0]
 			pass
-		elif val < 0.45:
+		elif val < 0.2:
 			Cseq.append(1)
 			Nscore = Nscore * N[1]
 			Cscore = Cscore * C[1]
-		elif val < 0.7:
+		elif val < 0.4:
 			Cseq.append(2)
 			Nscore = Nscore * N[2]
 			Cscore = Cscore * C[2]
-		elif val < 0.9:
+		elif val < 0.7:
 			Cseq.append(3)
 			Nscore = Nscore * N[3]
 			Cscore = Cscore * C[3]

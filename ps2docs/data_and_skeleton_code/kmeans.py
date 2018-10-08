@@ -43,7 +43,6 @@ def recalculateCtrs(tbl, ctrs, ptsAsgn):
 
     #for i in range(len(ctrs)):
 #	newCtrs[i] = means.iloc[i]
-	
 
     """SOME CODE GOES HERE"""
     pt0x = 0
@@ -76,7 +75,6 @@ def recalculateCtrs(tbl, ctrs, ptsAsgn):
     newCtrs[2] = [pt2x/pt2ctr, pt2y/pt2ctr]
 
     return newCtrs
-
 
 def euclideanDist(x, y):
 

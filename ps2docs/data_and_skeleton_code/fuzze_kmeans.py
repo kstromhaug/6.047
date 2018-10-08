@@ -16,16 +16,16 @@ def assignPoints(tbl, ctrs):
         that codes the cluster assignments as 0,1,and 2"""
 
     for point in tbl:
-        mindist = float('inf')
-        cluster = 0
+        distsum = 0
+        ctrArray = [0] * len(ctrs)
         for i in range(len(ctrs)):
-	    dist = euclideanDist(point, ctrs[i])
-            #dist = sqrt((point[1]-ctrs[i][1])**2 + (point[0]-ctrs[i][0])**2)
-            if dist < mindist:
-                mindist = dist
-                cluster = i
+    	    dist = euclideanDist(point, ctrs[i])
+            ctrArray[i] = dist
+            distsum += dist
+        for i in range(len(ctrs)):
+            ctrArray[i] = ctrArray[i]/distsum
 
-        ptsAsgn.append(cluster)
+        ptsAsgn.append(ctrArray)
 
 
     return ptsAsgn
@@ -34,50 +34,22 @@ def assignPoints(tbl, ctrs):
 def recalculateCtrs(tbl, ctrs, ptsAsgn):
     """Update the centroids based on the points assigned to them"""
 
-    newCtrs = [0] * len(ctrs)
+    xy = [[0,0]] * len(ctrs)
 
     """SOME CODE GOES HERE"""
-    pt0x = 0
-    pt0y = 0
-    pt0ctr = 0
-    pt1x = 0
-    pt1y = 0
-    pt1ctr = 0
-    pt2x = 0
-    pt2y = 0
-    pt2ctr = 0
 
-    for i in range(len(tbl)):
-        if ptsAsgn[i] == 0:
-            pt0x += tbl[i][0]
-            pt0y += tbl[i][1]
-            pt0ctr += 1
-        if ptsAsgn[i] == 1:
-            pt1x += tbl[i][0]
-            pt1y += tbl[i][1]
-            pt1ctr += 1
-        else:
-            pt2x += tbl[i][0]
-            pt2y += tbl[i][1]
-            pt2ctr += 1
+    for j in range(len(ctrs)):
+        probsum = 0
+        for i in range(len(tbl)):
+            xy[j][0] += tbl[i][0]*ptsAsgn[i][j]
+            xy[j][1] += tbl[i][1]*ptsAsgn[i][j]
+            probsum += ptsAsgn[i][j]
 
-    if pt0ctr != 0:
-	newCtrs[0] = [pt0x/pt0ctr, pt0y/pt0ctr]
-    else:
-	print "hi"
-	newCtrs[0] = ctrs[0]
-    if pt1ctr != 0:
-	newCtrs[1] = [pt1x/pt1ctr, pt1y/pt1ctr]
-    else:
-	print "hi"
-	newCtrs[1] = ctrs[1]
-    if pt2ctr != 0:
-	newCtrs[2] = [pt2x/pt2ctr, pt2y/pt2ctr]
-    else:
-	print "hi"
-	newCtrs[2] = ctrs[2]
+        for k in range(len(xy)):
+            xy[k][0] = xy[k][0]/probsum
+            xy[k][1] = xy[k][1]/probsum
 
-    return newCtrs
+    return xy
 
 
 def euclideanDist(x, y):
@@ -138,9 +110,9 @@ def main():
     analysis_name = sys.argv[1]
 
     """creates directories for storing plots and intermediate files"""
-    call(["rm", "-r", "./" + analysis_name + "_plots/"])
-    call(["mkdir", "-p", "./" + analysis_name + "_plots/"])
-    call(["mkdir", "-p", "./" + analysis_name + "_output/"])
+    # call(["rm", "-r", "./" + analysis_name + "fuzzy_plots/"])
+    # call(["mkdir", "-p", "./" + analysis_name + "fuzzy_plots/"])
+    # call(["mkdir", "-p", "./" + analysis_name + "fuzzy_output/"])
 
     """Reads in the point data from the given tissue file"""
     dataTable = [];
@@ -150,11 +122,11 @@ def main():
     f.close()
 
     """initializes centroids, stop criterion and step counting for clustering"""
-    #newCtrs = [[5,0], [5,40], [5,80]]
-    r = []
-    for x in range(6):
-	r.append(random.randint(1,101))
-    newCtrs = [[r[0],r[1]], [r[2],r[3]], [r[4],r[5]]]
+    newCtrs = [[5,0], [5,40], [5,80]]
+ #    r = []
+ #    for x in range(6):
+	# r.append(random.randint(1,101))
+ #    newCtrs = [[r[0],r[1]], [r[2],r[3]], [r[4],r[5]]]
 
     ptMemb = assignPoints(dataTable, newCtrs)
     stopCrit = False
@@ -179,6 +151,8 @@ def main():
             stopCrit = True
 
         stepCount = stepCount + 1
+
+    print stepCount
 
 if __name__ == "__main__":
     main()
