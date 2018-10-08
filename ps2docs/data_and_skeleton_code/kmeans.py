@@ -19,7 +19,7 @@ def assignPoints(tbl, ctrs):
         mindist = float('inf')
         cluster = 0
         for i in range(len(ctrs)):
-	    dist = euclideanDist(point, ctrs[i])
+            dist = euclideanDist(point, ctrs[i])
             if dist < mindist:
                 mindist = dist
                 cluster = i
@@ -148,9 +148,9 @@ def main():
     """initializes centroids, stop criterion and step counting for clustering"""
     newCtrs = [[5,0], [5,40], [5,80]]
 #    r = []
-#    for x in range(6):
-#	r.append(random.randint(1,101))
-#    newCtrs = [[r[0],r[1]], [r[2],r[3]], [r[4],r[5]]]
+#    for x in range(3):
+#	     r.append(random.randint(1,len(dataTable)))
+#    newCtrs = [dataTable[r[0]], dataTable[r[0]], dataTable[r[0]]]
 
     ptMemb = assignPoints(dataTable, newCtrs)
     stopCrit = False
