@@ -97,7 +97,7 @@ def plotClusters(tbl, ptMemb, cntrs, stepCnt, anLabel):
          *.ps, *.png, *.jpg
     """
 
-    p = open("./" + anLabel + "_output/dummy_table.txt", "w")
+    p = open("./" + anLabel + "_random_output/dummy_table.txt", "w")
 
     for i in xrange(len(tbl)):
         for j in xrange(len(tbl[i])):
@@ -115,7 +115,7 @@ def plotClusters(tbl, ptMemb, cntrs, stepCnt, anLabel):
 
     p.close()
 
-    plotCMD = "R CMD BATCH '--args ./" + anLabel + "_output/dummy_table.txt ./" + anLabel + "_plots/cluster_step%d.png" % stepCnt + "' ./kmeans_plot.R;"
+    plotCMD = "R CMD BATCH '--args ./" + anLabel + "_random_output/dummy_table.txt ./" + anLabel + "_random_plots/cluster_step%d.png" % stepCnt + "' ./kmeans_plot.R;"
     call(plotCMD, shell=True)
 
 
@@ -134,9 +134,9 @@ def main():
     analysis_name = sys.argv[1]
 
     """creates directories for storing plots and intermediate files"""
-    call(["rm", "-r", "./" + analysis_name + "_plots/"])
-    call(["mkdir", "-p", "./" + analysis_name + "_plots/"])
-    call(["mkdir", "-p", "./" + analysis_name + "_output/"])
+    call(["rm", "-r", "./" + analysis_name + "_random_plots/"])
+    call(["mkdir", "-p", "./" + analysis_name + "_random_plots/"])
+    call(["mkdir", "-p", "./" + analysis_name + "_random_output/"])
 
     """Reads in the point data from the given tissue file"""
     dataTable = [];
@@ -146,11 +146,12 @@ def main():
     f.close()
 
     """initializes centroids, stop criterion and step counting for clustering"""
-    newCtrs = [[5,0], [5,40], [5,80]]
-#    r = []
-#    for x in range(3):
-#	     r.append(random.randint(1,len(dataTable)))
-#    newCtrs = [dataTable[r[0]], dataTable[r[0]], dataTable[r[0]]]
+#    newCtrs = [[5,0], [5,40], [5,80]]
+    r = []
+    for x in range(3):
+	r.append(random.randint(1,len(dataTable)))
+    newCtrs = [dataTable[r[0]], dataTable[r[1]], dataTable[r[2]]]
+    print newCtrs
 
     ptMemb = assignPoints(dataTable, newCtrs)
     stopCrit = False
