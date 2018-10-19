@@ -86,7 +86,7 @@ for i in range(10000):
 	Cscore = 1
 	for j in range(10):
 		val = random.random()
-# For N distribution
+# For C distribution
 		if val < 0.05:
 			Cseq.append(0)
 			Nscore = Nscore * N[0]
