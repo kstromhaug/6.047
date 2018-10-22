@@ -49,17 +49,17 @@ def nussinov(rna, var):
 
 
 # generate 1000 RNA sequences randomly
-def getseqs():
+def getseqs(length):
 	RNAseqs = []
 	for i in range(1000):
 		RNA = []
-		for j in range(100):
+		for j in range(length):
 			val = random.random()
-			if val < 0.25:
+			if val < 0.05:
 				RNA.append('A')
-			elif val < 0.50:
+			elif val < 0.1:
 				RNA.append('U')
-			elif val < 0.75:
+			elif val < 0.55:
 				RNA.append('C')
 			else: RNA.append('G')
 		#rna = ''.join(RNA)
@@ -68,8 +68,9 @@ def getseqs():
 
 #def main():
 
-if __name__ == '__main__':
-	seqs = getseqs()
+if __name__ != '__main__':
+	#for j in range(150,275,25):
+	seqs = getseqs(100)
 	scores = np.zeros(1000, dtype=np.int)
 
 	for i in range(len(seqs)):
@@ -77,10 +78,11 @@ if __name__ == '__main__':
 			#print seqs[i]
 		nus = nussinov([seqs[i]], i)
 		scores[i] = nus
-	print scores
+	#print scores
 	print np.mean(scores)
 
-#y = nussinov(['G', 'G', 'G', 'A', 'A', 'A', 'U', 'C', 'C'])
+y = nussinov([['G', 'G', 'G', 'G', 'G', 'C', 'G', 'C', 'A', 'G']], 0)
+print y
 
 
 """
