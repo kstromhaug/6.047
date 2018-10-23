@@ -30,7 +30,7 @@ def nussinov(rna, var):
 			j = m+i
 
 			a = []
-			for k in range(j+1, i):
+			for k in range(i, j):
 				a.append(y[i][k]+y[k+1][j])
 			if a == []:
 				a = [0]
@@ -41,6 +41,8 @@ def nussinov(rna, var):
 						y[i][j-1], 
 						y[i+1][j-1] + scoringMatrix[accessDict[nuc1]][accessDict[nuc2]], 
 						min(a))
+		#print y
+		#print ""
 	# if var <= 10:
 	# 	print y
 	return y[0][N-1]
@@ -51,15 +53,15 @@ def nussinov(rna, var):
 # generate 1000 RNA sequences randomly
 def getseqs(length):
 	RNAseqs = []
-	for i in range(1000):
+	for i in range(100):
 		RNA = []
 		for j in range(length):
 			val = random.random()
-			if val < 0.05:
+			if val < 0.25:
 				RNA.append('A')
-			elif val < 0.1:
+			elif val < 0.5:
 				RNA.append('U')
-			elif val < 0.55:
+			elif val < 0.75:
 				RNA.append('C')
 			else: RNA.append('G')
 		#rna = ''.join(RNA)
@@ -68,21 +70,22 @@ def getseqs(length):
 
 #def main():
 
-if __name__ != '__main__':
+if __name__ == '__main__':
 	#for j in range(150,275,25):
+	print "main"
 	seqs = getseqs(100)
-	scores = np.zeros(1000, dtype=np.int)
+	scores = np.zeros(100, dtype=np.int)
 
 	for i in range(len(seqs)):
 		#if i < 10:
 			#print seqs[i]
 		nus = nussinov([seqs[i]], i)
 		scores[i] = nus
-	#print scores
+	print scores
 	print np.mean(scores)
 
-y = nussinov([['G', 'G', 'G', 'G', 'G', 'C', 'G', 'C', 'A', 'G']], 0)
-print y
+#y = nussinov([['G', 'G', 'G', 'A', 'A', 'A', 'U', 'C', 'C']], 0)
+#print y
 
 
 """

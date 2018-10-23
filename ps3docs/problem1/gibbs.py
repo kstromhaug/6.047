@@ -32,7 +32,7 @@ def GibbsSampler(S,L):
     for i in range(nSeqs):
         start = random.randint(0,len(S[i])-L) #the start for this 
         startInts.append(start)
-
+    print startInts, 0
     # deciding which one to skip
     skip = random.randint(0, nSeqs)
 
@@ -44,8 +44,6 @@ def GibbsSampler(S,L):
     PWMprobs = numpy.log(PWMprobs)
 
     # calculating the probabilities at starting at each position given the current PWM
-    # for one seq, make this a loop for them all later
-    # use rolling hashing
     allprobs = probDistributions(S, PWMprobs, L, nSeqs)
 
     oldPWM = PWMprobs
@@ -64,7 +62,7 @@ def GibbsSampler(S,L):
             normdist = normdist / probsum
             startpoint = numpy.random.choice(range(len(S[i])-L+1), 1, True, normdist)
             newStartPoints.append(startpoint[0])
-
+        #print newStartPoints
         # new row to skip
         skip = random.randint(0, nSeqs)
 
@@ -73,17 +71,12 @@ def GibbsSampler(S,L):
         PWM = pwmCount(skip, PWM, S, L, newStartPoints)
 
         # new PWM log probs
-        #print PWM
         PWMprobs = numpy.divide(PWM, float(nSeqs-1+4))
-        #print PWMprobs
         PWMprobs = numpy.log(PWMprobs)
-        #print PWMprobs
-        #print oldPWM
 
         # check the differece between old and new
         diffs = abs(numpy.subtract(PWMprobs, oldPWM))
-        #print diffs
-        if diffs.any() > 0.00000000005:
+        if diffs.any() > 0.5:
             go = True
             allprobs = probDistributions(S, PWMprobs, L, nSeqs)
             oldPWM = PWMprobs
@@ -91,26 +84,17 @@ def GibbsSampler(S,L):
         else:
             go = False
 
+    seqs_for_fasta = []
+    for i in range(len(S)):
+        start = newStartPoints[i]
+        seqs_for_fasta.append(S[i][start:start+L])
 
-    # and then we do it all over again!
-
-    # have to check if the PWM has not converged
-
-
-        # generate nSeqs-1 random numbers for start positions, 
-        # but they have to be L shorter than the length of the sequence.
-
-    # I look at the sequences and create the PWM based on the sequences that I have
-
-    # for the next iteration, 
-    # pick the next starting point based on what the probability of having 
-    # started at each point is. Pick the starting point with highest probability
-
-    # still not sure what the leaving of one out does exactly
-
-    # What can I put in a helper function?
-
-
+    with open('fasta2.fa', 'w') as f:
+        for seq in seqs_for_fasta:
+            f.write('>\n')
+            f.write(seq)
+            f.write('\n')
+    f.close()
     ######### END OF YOUR CODE HERE #####
 	
     return PWM
@@ -133,14 +117,14 @@ def probDistributions(S, PWMprobs, L, nSeqs):
         # use rolling hashing
 
     allprobs = []
-    for i in range(nSeqs):
+    for seq in S:
         sProbs = []
-        prob = 0
-        for j in range(len(S[i])-L+1):
+        for j in range(len(seq)-L+1):
+            prob = 0
             for k in range(L):
                 index = j+k
-                nuc = S[i][j+k]
-                prob += PWMprobs[ad[nuc]][k]
+                nuc = seq[index]
+                prob += PWMprobs[ad[nuc]][k] # changed from +=
             sProbs.append(prob)
         allprobs.append(sProbs)
     return allprobs
@@ -182,6 +166,25 @@ def main():
         for i in range(L):
             print " %5.3f" % P[j][i],
         print ""
+
+    motif = []
+    for i in range(L):
+        maxnuc = 0
+        ind = 0
+        for j in range(4):
+            #print P[j][i]
+            if P[j][i] > maxnuc:
+                maxnuc = P[j][i]
+                ind = j
+        motif.append(alphabet[ind])
+    motif = ''.join(motif)
+    print motif
+    for seq in S:
+        if motif in seq:
+            print True
+        else:
+            print False
+
 	
 def readdata(file):
     data = [];
