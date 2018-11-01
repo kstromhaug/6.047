@@ -26,7 +26,7 @@ if __name__ == '__main__':
     S = S[0]
     C = readdata(consfile)
     C = C[0]
-    print len(C) == len(S)
+    #print len(C) == len(S)
     compareDict = {}
     for i in range(len(S)-k):
     	if S[i] == '-':
@@ -54,17 +54,17 @@ if __name__ == '__main__':
     sortedDF2 = kCountsDF.sort_values(1, ascending=False)
     fiddycont = sortedDF2[:50].index
 
-    with open('most_freq.txt', 'w') as f:
-    	for seq in fiddyfreq:
-	    	f.write(seq)
-	    	f.write('\n')
-    f.close()
+    # with open('most_freq.txt', 'w') as f:
+    # 	for seq in fiddyfreq:
+	   #  	f.write(seq)
+	   #  	f.write('\n')
+    # f.close()
 
-    with open('most_cons.txt', 'w') as f:
-    	for seq in fiddycont:
-	    	f.write(seq)
-	    	f.write('\n')
-    f.close()
+    # with open('most_cons.txt', 'w') as f:
+    # 	for seq in fiddycont:
+	   #  	f.write(seq)
+	   #  	f.write('\n')
+    # f.close()
 
 
     with open('yeast_motifs.txt', 'r') as f:

@@ -57,11 +57,11 @@ def getseqs(length):
 		RNA = []
 		for j in range(length):
 			val = random.random()
-			if val < 0.25:
+			if val < 0.05:
 				RNA.append('A')
-			elif val < 0.5:
+			elif val < 0.1:
 				RNA.append('U')
-			elif val < 0.75:
+			elif val < 0.55:
 				RNA.append('C')
 			else: RNA.append('G')
 		#rna = ''.join(RNA)

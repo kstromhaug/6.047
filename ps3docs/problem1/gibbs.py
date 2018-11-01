@@ -75,26 +75,29 @@ def GibbsSampler(S,L):
         PWMprobs = numpy.log(PWMprobs)
 
         # check the differece between old and new
-        diffs = abs(numpy.subtract(PWMprobs, oldPWM))
-        if diffs.any() > 0.5:
+        diffs = numpy.abs(numpy.subtract(PWMprobs, oldPWM))
+        if (diffs > 0.4).any():
             go = True
             allprobs = probDistributions(S, PWMprobs, L, nSeqs)
             oldPWM = PWMprobs
 
         else:
             go = False
+            print numpy.abs(numpy.subtract(PWMprobs, oldPWM))
 
-    seqs_for_fasta = []
-    for i in range(len(S)):
-        start = newStartPoints[i]
-        seqs_for_fasta.append(S[i][start:start+L])
+    # seqs_for_fasta = []
+    # for i in range(len(S)):
+    #     start = newStartPoints[i]
+    #     seqs_for_fasta.append(S[i][start:start+L])
 
-    with open('fasta2.fa', 'w') as f:
+    with open('fasta4_1.fa', 'w') as f:
         for seq in seqs_for_fasta:
             f.write('>\n')
             f.write(seq)
             f.write('\n')
     f.close()
+    # PWM = PWM.astype(int)
+    # numpy.savetxt('PWMdata4_1.txt', PWM)
     ######### END OF YOUR CODE HERE #####
 	
     return PWM
