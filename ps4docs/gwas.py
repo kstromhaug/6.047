@@ -3,6 +3,8 @@ import numpy
 import pandas
 import random
 import scipy.stats
+from scipy import stats
+#from scipy.stats import chisqprob
 #################
 
 # DO THE IMORTING OF VALUES FROM TERMINAL
@@ -20,7 +22,7 @@ s = standard deviation for normal distribution of beta values pertaining
 
 n = 10000
 k = 100
-m = 10000
+m = 1000
 s = 0.25
 
 def gen_sequences(n, k, m, s):
@@ -30,15 +32,19 @@ def gen_sequences(n, k, m, s):
 	disease_snps = []
 	for x in range(k):
 		disease_snps.append(random.randint(0, m))
+	print disease_snps
 
 	# give disease causing snps beta's from appropriate s
 	# give other snps a beta of 0
 	betas = []
+	kSNPs = []
 	for i in range(m):
 		if i in disease_snps:
 			betas.append(numpy.random.normal(loc = 0.0, scale = s))
+			kSNPs.append(True)
 		else:
 			betas.append(0) # because non-disease snps shouldn't affect the equation
+			kSNPs.append(False)
 
 	# randomly generate the genes, sequences of 0s and 1s
 	# randodmly generate epsilons from distribution given
@@ -59,46 +65,85 @@ def gen_sequences(n, k, m, s):
 		#snpData.set_value(k, 'epsilon', eps)
 
 	has_disease = []
-
+	healthy_ppl = []
 	inv_genes = numpy.array(genes).T
 	ys = numpy.dot(betas, inv_genes) + epsils
 
+	for i in range(n):
+		if ys[i] > 2:
+			has_disease.append(i)
+		else:
+			healthy_ppl.append(i)
+	print len(has_disease)
 
 	genes = numpy.array(genes)
-	num_ones = genes.sum(axis=0)	# sum of each columns 
-	snp_ones = genes.sum(axis=1)	# the number of 1s in each person
-	total = num_ones.sum()
-	expected_ones = total/(m*n)
-	num_zeroes = n-num_ones
-	contingency = numpy.concatenate(([num_ones],[num_zeroes]), axis=0)
-	#print contingency
 
-	chi_square, p, dof, ex = scipy.stats.chi2_contingency(contingency, correction=False)
-	print chi_square
-	print p
-	print dof
-	print ex
-
-	new_p = float(p)/(2*m)
-	print new_p
+	diseased = genes[has_disease,:]		#subset determined to have the disease
+	healthy = genes[healthy_ppl,:]		#subset determined to to be healthy
 
 
+	print len(diseased), len(healthy), len(genes)
 
-	#print has_disease
+	diseased_with_one = diseased.sum(axis=0)
+	healthy_with_one = healthy.sum(axis=0)
 
-	# chi-square test of all snps
-	# null hypothesis: snp is not disease causing
-	# assuming null hypothesis,
-	# calculate probability.....
-	# need sum of 0s, sum of 1s, and total sum
-	# calculate the percentage of  0's and 1's
-	# - Sum across rows, to get number of snps
-	# - caluclate percentages
-	# - predict what the frequency of that snp should be
+	chi_squares = []
+	ps = []
+	dofs = []
+	exs = []
 	for i in range(m):
+		square = [[0,0], [0,0]]
+		square[0][0] = diseased_with_one[i]
+		square[0][1] = healthy_with_one[i]
+		square[1][0] = len(diseased)-diseased_with_one[i]
+		square[1][1] = len(healthy)-healthy_with_one[i]
+		if i < 10:
+			print square
+		chi_square, p, dof, ex = scipy.stats.chi2_contingency(square, correction=False)
+
+		chi_squares.append(chi_square)
+		ps.append(p)
+		dofs.append(dof)
+		exs.append(ex)
+
+	#print scipy.stats.chi2_contingency([[30, 90],[40, 100]], correction=False)
+
+	print chi_squares[:10]
+	print ps[:10]
+
+
+	###########*********##########*********
+	# HOW DO I DETERMINE IF I PREDICTED THE SNP TO BE BENIGN OR DISEASE CAUSING?
+	# ONLY MISSING PIECE NOW
+	###########*********##########*********
+
+	# ACCURACY
+	# (TP+TN)/(TP+TN+FP+FN)
+
+	predicted_disease_snps = []
+	for i in range(m):
+		# add True if predicted to be a SNP and False if not
 		pass
 
-	return 0
 
+	confusion = [[0,0],[0,0]]
+	for i in range(m):
+		if predicted_disease_snps[i] == False and kSNPs[i] == False:
+			confusion[0][0] += 1
+		elif predicted_disease_snps[i] == True and kSNPs[i] == False:
+			confusion[0][1] += 1
+		elif predicted_disease_snps[i] == False and kSNPs[i] == True:
+			confusion[1][0] += 1
+		else:
+			confusion[1][1] += 1
+
+	accuracy = float((confusion[0][0]+confusion[1][1])) / (sum(confusion[0])+sum(confusion[1]))
+
+	# PRECISION
+	# TP / predicted yes
+	precision = confusion[1][1]/(confusion[0][1]+confusion[1][1])
+
+	print accuracy, precision
+	return 0
 
 gen_sequences(n, k, m, s)

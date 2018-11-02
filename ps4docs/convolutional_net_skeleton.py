@@ -2,6 +2,8 @@ from keras.models import *
 from keras.layers import *
 import keras
 import numpy as np
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
 
 def get_x_y_data():
     negative_data = []
@@ -44,24 +46,27 @@ def get_x_y_data():
     return x_train, y_train
 
 x_train, y_train = get_x_y_data()
+
+#X_train, X_test, y_train, y_test = train_test_split(df, y, test_size=0.2
 x_train
 
 model = Sequential()
-model.add(Conv2D(32, kernel_size=(5, 5), strides=(1, 1),
+model.add(Conv2D(32, kernel_size=(4, 6), strides=(1, 1),
                  activation='relu',
                  input_shape=input_shape))
-model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+model.add(MaxPooling2D(pool_size=(1, 1)))#, strides=(2, 2)))
 model.add(Flatten())
-model.add(Dense(1000, activation='relu'))
-model.add(Dense(num_classes, activation='softmax'))
+model.add(Dense(10, activation='relu'))
+model.add(Dense(2, activation='softmax'))
+model.add(Activation(tf.nn.softmax))
 
 model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.SGD(lr=0.01),
-              metrics=['accuracy'])
+              metrics=['accuracy'],
+              validation_split=0.1)
 
 model.fit(x_train, y_train,
-          batch_size=batch_size,
-          epochs=epochs,
+          epochs=3,
           verbose=1,
           validation_data=(x_test, y_test),
           callbacks=[history])
